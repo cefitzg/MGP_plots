@@ -1,7 +1,7 @@
 %This script creates and plots the figures for Temporal Dynamics of Faculty
 %Hiring in Mathematics.
 
-%This code was primarily written by Cody FitzGerald 
+%This code was primarily written by Cody FitzGerald  
 
 clear; clc; close all;
 
