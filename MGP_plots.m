@@ -419,6 +419,7 @@ legend([p1;pe(1);po(1);p0],...
     [labels;{'elite schools';'other schools';'geometric mean'}],...
     Location='southwest',FontSize=12);
 axis([1950 2010 10^-5 10^0])
+xlabel('Date')
 ylabel('Hub Scores')
 set(gca,'fontsize', fs);
 
@@ -440,6 +441,7 @@ legend([p1;pe(1);po(1);p0],...
     [labels;{'elite schools';'other schools';'geometric mean'}],...
     Location='southwest',FontSize=12);
 axis([1950 2010 10^-5 10^0])
+xlabel('Date')
 ylabel('Authority Scores')
 set(gca,'fontsize', fs);
 
