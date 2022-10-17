@@ -4,8 +4,6 @@ clear; clc; close all;
 %106 schools to use in the network analysis for Temporal Dynamics of
 %Faculty Hiring in Mathematics 
 
-%Written by Cody FitzGerald
-
 %load in data
 data = readtable('MGPdata.csv');
 
