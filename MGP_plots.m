@@ -210,6 +210,12 @@ faculty_percentage_by_school = faculty_percentage_by_school(nz_ind); %get facult
 [frank,gof] = fit(auth_ranks_nz,faculty_percentage_by_school,'b*x^m');
 fit_coefs= coeffvalues(frank); %get b and m from power law
 
+%get the R^2 value 
+mdl = fitlm(log10(auth_ranks_nz),log10(faculty_percentage_by_school)); 
+mdl.Rsquared
+
+%check this with Pepper before publication.
+
 grad_year = fac_data.year; %get year of phd graduation
 grad_institution = fac_data.institution; %get grad institution
 fac_institution = fac_data.facultyinstitution; %get faculty institution
