@@ -1,3 +1,5 @@
+clear; clc; close all 
+
 %Figure 10 (we cannot release targetlist6.csv publicly)
 
 %Written by Yitong Huang and Cody FitzGerald 
