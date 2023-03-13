@@ -207,12 +207,12 @@ auth_ranks_nz = auth_ranks(nz_ind); %keep non-zero authority scores
 faculty_percentage_by_school = faculty_percentage_by_school(nz_ind); %get faculty percentage by school for those with non-zero authority score
 
 %fit authority score and GFT to power law
-[frank,gof] = fit(auth_ranks_nz,faculty_percentage_by_school,'b*x^m');
-fit_coefs= coeffvalues(frank); %get b and m from power law
+%[frank,gof] = fit(auth_ranks_nz,faculty_percentage_by_school,'b*x^m');
+%fit_coefs= coeffvalues(frank); %get b and m from power law
 
 %get the R^2 value 
 mdl = fitlm(log10(auth_ranks_nz),log10(faculty_percentage_by_school)); 
-mdl.Rsquared
+mdl.Rsquared;
 
 %check this with Pepper before publication.
 
@@ -257,6 +257,7 @@ fs = 18; %fontsize
 fs1 = 6; %fontsize for heat maps
 lw = 6; %linewidth
 figpos = [100 100 560 420]; %figure position
+figpos_sp = [100 100 2*560 420]; %figure position for subplots
 
 %plot raw number of degrees granted and faculty positions recorded
 figure(1)
@@ -302,20 +303,36 @@ legend('Location','northeast')
 xticks([1950 2015])
 
 %GFT by authority score of grad institution
+% figure(4)
+% clf
+% set(gcf,'Position',figpos)
+% loglog(auth_ranks_nz,faculty_percentage_by_school,'o','MarkerSize',ms,'MarkerFaceColor','b')
+% hold on
+% loglog(linspace(min(auth_ranks_nz),max(auth_ranks_nz),250),fit_coefs(1).*linspace(min(auth_ranks_nz),max(auth_ranks_nz),250).^fit_coefs(2),'LineWidth',lw,'LineStyle','-.','Color',[0.5 0 0.5])
+% xlabel('Authority Score')
+% ylabel('GFT Rate')
+% set(gca,'FontSize',fs);
+% axis([0 2e-1 0 5e-1])
+% xticks([0.000001 1e-4 1e-2 2e-1])
+% xticklabels({'1x10^{-6}','1x10^{-4}','1x10^{-2}','2x10^{-1}'})
+% yticks([1e-2 1e-1 5e-1])
+% yticklabels({'1x10^{-2}' '1x10^{-1}' '5x10^{-1}'})
+
+%GFT by authority score of grad institution (ALT)
 figure(4)
 clf
 set(gcf,'Position',figpos)
-loglog(auth_ranks_nz,faculty_percentage_by_school,'o','MarkerSize',ms,'MarkerFaceColor','b')
+plot(log10(auth_ranks_nz),log10(faculty_percentage_by_school),'o','MarkerSize',ms,'MarkerFaceColor','b')
 hold on
-loglog(linspace(min(auth_ranks_nz),max(auth_ranks_nz),250),fit_coefs(1).*linspace(min(auth_ranks_nz),max(auth_ranks_nz),250).^fit_coefs(2),'LineWidth',lw,'LineStyle','-.','Color',[0.5 0 0.5])
-xlabel('Authority Score')
-ylabel('GFT Rate')
+plot(log10(linspace(min(auth_ranks_nz),max(auth_ranks_nz),250)),mdl.Coefficients.Estimate(2)*log10(linspace(min(auth_ranks_nz),max(auth_ranks_nz),250))+mdl.Coefficients.Estimate(1),'LineWidth',lw,'LineStyle','-.','Color',[0.5 0 0.5])
+xlabel('log_{10}(Authority Score)')
+ylabel('log_{10}(GFT Rate)')
 set(gca,'FontSize',fs);
-axis([0 2e-1 0 5e-1])
-xticks([0.000001 1e-4 1e-2 2e-1])
-xticklabels({'1x10^{-6}','1x10^{-4}','1x10^{-2}','2x10^{-1}'})
-yticks([1e-2 1e-1 5e-1])
-yticklabels({'1x10^{-2}' '1x10^{-1}' '5x10^{-1}'})
+axis([min(log10(auth_ranks_nz)) max(log10(auth_ranks_nz)) min(log10(faculty_percentage_by_school)) max(log10(faculty_percentage_by_school))])
+% xticks([0.000001 1e-4 1e-2 2e-1])
+% xticklabels({'1x10^{-6}','1x10^{-4}','1x10^{-2}','2x10^{-1}'})
+% yticks([1e-2 1e-1 5e-1])
+% yticklabels({'1x10^{-2}' '1x10^{-1}' '5x10^{-1}'})
 
 %percentage of climbers by year
 figure(5)
@@ -355,27 +372,8 @@ set(gca,'fontsize', fs);
 axis([1950 2010 0 1])
 legend('Authority Centrality','Hub Centrality')
 
-%make a heat map of kendall tau based on authority score pairs for elite departments.
+%make a heat map of kendall tau based on hub score pairs for elite departments.
 figure(81)
-clf
-set(gcf,'Position',figpos)
-myColorMap = jet(256);
-myColorMap(65:192,:) = 1; %fix color map so background is white
-colormap(myColorMap);
-imagesc(Auth_large)
-a = colorbar;
-ylabel(a,'Kendall \tau','FontSize',fs,'Rotation',270);
-ax = gca;
-set(gca,'fontsize', fs)
-%title('Kendall Rank Correlation Coefficient of Authority Scores by Department')
-ax.YTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
-ax.YTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
-ax.XTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
-ax.XTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
-caxis([-1 1])
-
-%make a heat map of kendall tau based on hubs score pairs for elite departments.
-figure(82)
 clf
 set(gcf,'Position',figpos)
 myColorMap = jet(256);
@@ -393,6 +391,63 @@ ax.XTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
 ax.XTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
 caxis([-1 1])
 
+%make a heat map of kendall tau based on authority score pairs for elite departments.
+%plot figure 8 individually 
+figure(82)
+clf
+set(gcf,'Position',figpos)
+myColorMap = jet(256);
+myColorMap(65:192,:) = 1; %fix color map so background is white
+colormap(myColorMap);
+imagesc(Auth_large)
+a = colorbar;
+ylabel(a,'Kendall \tau','FontSize',fs,'Rotation',270);
+ax = gca;
+set(gca,'fontsize', fs)
+%title('Kendall Rank Correlation Coefficient of Authority Scores by Department')
+ax.YTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
+ax.YTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
+ax.XTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
+ax.XTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
+caxis([-1 1])
+
+
+%plot figure 8 subplots 
+figure(8)
+clf
+set(gcf,'Position',figpos_sp)
+%plotting hub
+subplot(1,2,1)
+myColorMap = jet(256);
+myColorMap(65:192,:) = 1; %fix color map so background is white
+colormap(myColorMap);
+imagesc(Hub_large)
+a = colorbar;
+ylabel(a,'Kendall \tau','FontSize',fs,'Rotation',270);
+ax = gca;
+set(gca,'fontsize', fs)
+ax.YTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
+ax.YTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
+ax.XTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
+ax.XTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
+caxis([-1 1])
+%plotting authority
+subplot(1,2,2)
+myColorMap = jet(256);
+myColorMap(65:192,:) = 1; %fix color map so background is white
+colormap(myColorMap);
+imagesc(Auth_large)
+a = colorbar;
+ylabel(a,'Kendall \tau','FontSize',fs,'Rotation',270);
+ax = gca;
+set(gca,'fontsize', fs)
+ax.YTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
+ax.YTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
+ax.XTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
+ax.XTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
+caxis([-1 1])
+
+
 %plotting presets for hub and authority time series
 slc = cellstr(school_list);
 hubs = hubs_in_order;
@@ -404,6 +459,7 @@ highlights = [6,23,106]; % schools to highlight
 h2 = [5,10,17,29,32,38,58,50,82,88,98]; %elite schools
 labels = slc(highlights);
 
+%plot figure 9 individually 
 %plot hub time series
 figure(91);
 clf
@@ -431,6 +487,51 @@ set(gca,'fontsize', fs);
 figure(92);
 clf
 set(gcf,'Position',figpos)
+[ii,~,v] = find(auths');
+out = accumarray(ii,v,[],@geomean); %get geometric mean of all schools
+po = semilogy(years,auths',Color=color1,LineWidth=6); %plot all schools
+hold all
+pe = plot(years,auths(h2,:),Color=color2,LineWidth=6); %plot just elite schools darker
+ax = gca();
+ax.ColorOrderIndex = 1;
+p0 = plot(years,out,'--',LineWidth=6); %plot geometric mean
+p1 = plot(years,auths(highlights,:),LineWidth=6); %plot highlighted schools
+legend('-DynamicLegend');
+legend([p1;pe(1);po(1);p0],...
+    [labels;{'elite schools';'other schools';'geometric mean'}],...
+    Location='southwest',FontSize=12);
+axis([1950 2010 10^-5 10^0])
+xlabel('Date')
+ylabel('Authority Scores')
+set(gca,'fontsize', fs);
+
+%plot figure 9 using subplots 
+%subplot for hub time series
+figure(9);
+clf
+set(gcf,'Position',figpos_sp)
+subplot(1,2,1)
+[ii,~,v] = find(hubs');
+out = accumarray(ii,v,[],@geomean); % get geometric mean of all schools
+po = semilogy(years,hubs',Color=color1,LineWidth=6); %plot all schools
+hold all
+pe = plot(years,hubs(h2,:),Color=color2,LineWidth=6); %plot just elite schools darker
+ax = gca();
+ax.ColorOrderIndex = 1;
+corder = get(gca,'ColorOrder');
+p0 = plot(years,out,'--',LineWidth=6); %plot geometric mean
+p1 = plot(years,hubs(highlights,:),LineWidth=6); %plot highlighted schools
+legend('-DynamicLegend');
+legend([p1;pe(1);po(1);p0],...
+    [labels;{'elite schools';'other schools';'geometric mean'}],...
+    Location='southwest',FontSize=12);
+axis([1950 2010 10^-5 10^0])
+xlabel('Date')
+ylabel('Hub Scores')
+set(gca,'fontsize', fs);
+
+%subplot for authority time series
+subplot(1,2,2)
 [ii,~,v] = find(auths');
 out = accumarray(ii,v,[],@geomean); %get geometric mean of all schools
 po = semilogy(years,auths',Color=color1,LineWidth=6); %plot all schools
