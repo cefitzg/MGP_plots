@@ -1,12 +1,18 @@
 clear; clc; close all 
 
+%Figure 10 (we cannot release targetlist6.csv publicly)
+
 %Written by Yitong Huang and Cody FitzGerald 
 
 %read in data 
 data = readtable('MGPdata.csv'); %publicly released data (anonymized data)
+%data_cmu_fac = readtable('targetlist6.csv'); %nonanonymized data 
 
-inst = data.institution; %get grad institution 
-fac = data.facultyinstitution; %get faculty institution 
+%inst = data_cmu_fac.institution; %get grad training department 
+%fac = data_cmu_fac.facultyinstitution; %get faculty department
+
+inst = data.institution; 
+fac = data.facultyinstitution;
 
 isFaculty = data.isFaculty; %use the 0,1 isFaculty flag
 
@@ -29,7 +35,7 @@ for i = 1:length(elist_list)
     %get the years associated with above data 
     temp_years = temp_grad_data.year;
     temp_fac_years = temp_fac_data.year;
-    %count up the number of people on a year by year basis
+    %count up the numbe rof people on a year by year basis
     for j = 1:69
         year(j,i) = 1950+j;
         num_grads(j,i) = length(find(temp_years == (1950+j)));
