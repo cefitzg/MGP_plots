@@ -10,8 +10,6 @@ fig10.m plots Figure 10 and uses target6.csv, a non-anonymized version of MGPdat
 The pipeline we used to get the data is here: 
 https://github.com/chadtopaz/math-prestige
 
-Things to check: 
 
-Did we plot Fig. 4 right based on Pepper's description? Is this clear? 
 
 
