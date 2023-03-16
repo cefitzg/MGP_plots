@@ -1,9 +1,8 @@
-%This script creates and plots the figures for Temporal Dynamics of Faculty
-%Hiring in Mathematics.
+%This script creates and plots the figures for Temporal Dynamics of Faculty Hiring in Mathematics.
 
 clear; clc; close all;
 
-%Analysis 
+%ANALYSIS
 
 %load in data and compute elite, well-placing and schools for the network analysis
 school_list_compute;
@@ -206,15 +205,9 @@ nz_ind = find(auth_ranks ~= 0); %find indices of all non-zero authority score
 auth_ranks_nz = auth_ranks(nz_ind); %keep non-zero authority scores
 faculty_percentage_by_school = faculty_percentage_by_school(nz_ind); %get faculty percentage by school for those with non-zero authority score
 
-%fit authority score and GFT to power law
-%[frank,gof] = fit(auth_ranks_nz,faculty_percentage_by_school,'b*x^m');
-%fit_coefs= coeffvalues(frank); %get b and m from power law
-
 %get the R^2 value 
 mdl = fitlm(log10(auth_ranks_nz),log10(faculty_percentage_by_school)); 
 mdl.Rsquared;
-
-%check this with Pepper before publication.
 
 grad_year = fac_data.year; %get year of phd graduation
 grad_institution = fac_data.institution; %get grad institution
@@ -249,7 +242,42 @@ for i = 1:length(year_list)
     climber_percentage_by_year(i) = sum(fac_institution_auth(index)> grad_institution_auth(index))/length(index); %compute climber percentage
 end
 
-%Plotting Figures 
+%Averaged graduate production and faculty hires for MIT, Yale, and CMU.
+
+inst = data.institution; %get grad institution 
+fac = data.facultyinstitution; %get faculty institution 
+
+isFaculty = data.isFaculty; %use the 0,1 isFaculty flag
+
+%list of schools to plot 
+elist_list = {'Carnegie Mellon University', 'Yale University',"Massachusetts Institute of Technology"};
+
+%pre-allocated matrices 
+year = zeros(69,3);
+num_grads = zeros(69,3);
+num_hires = zeros(69,3);
+
+for i = 1:length(elist_list)
+    temp_grad_ind = strcmp(inst,elist_list{i}) & strcmp(isFaculty, 'TRUE'); %get indices for people who went to MIT, Yale, or CMU for grad school and became a DG faculty member
+    temp_fac_ind = strcmp(fac,elist_list{i}); %get indices for people who became DG faculty that was hired at MIT, Yale, or CMU. 
+    
+    %filter data 
+    temp_grad_data = data(temp_grad_ind,:);
+    temp_fac_data = data(temp_fac_ind,:);
+    
+    %get the years associated with above data 
+    temp_years = temp_grad_data.year;
+    temp_fac_years = temp_fac_data.year;
+    %count up the number of people on a year by year basis
+    for j = 1:69
+        year(j,i) = 1950+j;
+        num_grads(j,i) = length(find(temp_years == (1950+j)));
+        num_hires(j,i) = length(find(temp_fac_years==(1950+j)));
+    end
+    
+end
+
+%PLOTTING FIGURES 
 
 %plotting settings
 ms = 9; %markersize
@@ -301,22 +329,6 @@ hold off
 legend('Maximum well-placing GFT transition rate','Median well-placing GFT transition rate','Minimum well-placing GFT transition rate')
 legend('Location','northeast')
 xticks([1950 2015])
-
-%GFT by authority score of grad institution
-% figure(4)
-% clf
-% set(gcf,'Position',figpos)
-% loglog(auth_ranks_nz,faculty_percentage_by_school,'o','MarkerSize',ms,'MarkerFaceColor','b')
-% hold on
-% loglog(linspace(min(auth_ranks_nz),max(auth_ranks_nz),250),fit_coefs(1).*linspace(min(auth_ranks_nz),max(auth_ranks_nz),250).^fit_coefs(2),'LineWidth',lw,'LineStyle','-.','Color',[0.5 0 0.5])
-% xlabel('Authority Score')
-% ylabel('GFT Rate')
-% set(gca,'FontSize',fs);
-% axis([0 2e-1 0 5e-1])
-% xticks([0.000001 1e-4 1e-2 2e-1])
-% xticklabels({'1x10^{-6}','1x10^{-4}','1x10^{-2}','2x10^{-1}'})
-% yticks([1e-2 1e-1 5e-1])
-% yticklabels({'1x10^{-2}' '1x10^{-1}' '5x10^{-1}'})
 
 %GFT by authority score of grad institution (ALT)
 figure(4)
@@ -372,47 +384,7 @@ set(gca,'fontsize', fs);
 axis([1950 2010 0 1])
 legend('Authority Centrality','Hub Centrality')
 
-%make a heat map of kendall tau based on hub score pairs for elite departments.
-figure(81)
-clf
-set(gcf,'Position',figpos)
-myColorMap = jet(256);
-myColorMap(65:192,:) = 1; %fix color map so background is white
-colormap(myColorMap);
-imagesc(Hub_large)
-a = colorbar;
-ylabel(a,'Kendall \tau','FontSize',fs,'Rotation',270);
-ax = gca;
-set(gca,'fontsize', fs)
-%title('Kendall Rank Correlation Coefficient of Hub Scores by Department')
-ax.YTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
-ax.YTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
-ax.XTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
-ax.XTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
-caxis([-1 1])
-
-%make a heat map of kendall tau based on authority score pairs for elite departments.
-%plot figure 8 individually 
-figure(82)
-clf
-set(gcf,'Position',figpos)
-myColorMap = jet(256);
-myColorMap(65:192,:) = 1; %fix color map so background is white
-colormap(myColorMap);
-imagesc(Auth_large)
-a = colorbar;
-ylabel(a,'Kendall \tau','FontSize',fs,'Rotation',270);
-ax = gca;
-set(gca,'fontsize', fs)
-%title('Kendall Rank Correlation Coefficient of Authority Scores by Department')
-ax.YTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
-ax.YTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
-ax.XTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
-ax.XTickLabel = {'Caltech','CMU','Columbia','Cornell','Harvard','MIT','Princeton','Stanford','Berkeley','Chicago','Michigan','Washington','UW-Madison','Yale'};
-caxis([-1 1])
-
-
-%plot figure 8 subplots 
+%plot heat maps of kendall tau based on hub and authority score pairs for elite departments.
 figure(8)
 clf
 set(gcf,'Position',figpos_sp)
@@ -452,75 +424,30 @@ caxis([-1 1])
 slc = cellstr(school_list);
 hubs = hubs_in_order;
 auths = auth_in_order;
-years = 1950:2010;
+years_f9 = 1950:2010;
 color1 = '#ececec'; %lighter gray for all schools
 color2 = '#999999'; %darker gray for elite schools
 highlights = [6,23,106]; % schools to highlight
 h2 = [5,10,17,29,32,38,58,50,82,88,98]; %elite schools
 labels = slc(highlights);
 
-%plot figure 9 individually 
-%plot hub time series
-figure(91);
-clf
-set(gcf,'Position',figpos)
-[ii,~,v] = find(hubs');
-out = accumarray(ii,v,[],@geomean); % get geometric mean of all schools
-po = semilogy(years,hubs',Color=color1,LineWidth=6); %plot all schools
-hold all
-pe = plot(years,hubs(h2,:),Color=color2,LineWidth=6); %plot just elite schools darker
-ax = gca();
-ax.ColorOrderIndex = 1;
-corder = get(gca,'ColorOrder');
-p0 = plot(years,out,'--',LineWidth=6); %plot geometric mean
-p1 = plot(years,hubs(highlights,:),LineWidth=6); %plot highlighted schools
-legend('-DynamicLegend');
-legend([p1;pe(1);po(1);p0],...
-    [labels;{'elite schools';'other schools';'geometric mean'}],...
-    Location='southwest',FontSize=12);
-axis([1950 2010 10^-5 10^0])
-xlabel('Date')
-ylabel('Hub Scores')
-set(gca,'fontsize', fs);
 
-%plotting authority time series
-figure(92);
-clf
-set(gcf,'Position',figpos)
-[ii,~,v] = find(auths');
-out = accumarray(ii,v,[],@geomean); %get geometric mean of all schools
-po = semilogy(years,auths',Color=color1,LineWidth=6); %plot all schools
-hold all
-pe = plot(years,auths(h2,:),Color=color2,LineWidth=6); %plot just elite schools darker
-ax = gca();
-ax.ColorOrderIndex = 1;
-p0 = plot(years,out,'--',LineWidth=6); %plot geometric mean
-p1 = plot(years,auths(highlights,:),LineWidth=6); %plot highlighted schools
-legend('-DynamicLegend');
-legend([p1;pe(1);po(1);p0],...
-    [labels;{'elite schools';'other schools';'geometric mean'}],...
-    Location='southwest',FontSize=12);
-axis([1950 2010 10^-5 10^0])
-xlabel('Date')
-ylabel('Authority Scores')
-set(gca,'fontsize', fs);
 
-%plot figure 9 using subplots 
-%subplot for hub time series
+%plot hub and authority time series
 figure(9);
 clf
 set(gcf,'Position',figpos_sp)
 subplot(1,2,1)
 [ii,~,v] = find(hubs');
 out = accumarray(ii,v,[],@geomean); % get geometric mean of all schools
-po = semilogy(years,hubs',Color=color1,LineWidth=6); %plot all schools
+po = semilogy(years_f9,hubs',Color=color1,LineWidth=6); %plot all schools
 hold all
-pe = plot(years,hubs(h2,:),Color=color2,LineWidth=6); %plot just elite schools darker
+pe = plot(years_f9,hubs(h2,:),Color=color2,LineWidth=6); %plot just elite schools darker
 ax = gca();
 ax.ColorOrderIndex = 1;
 corder = get(gca,'ColorOrder');
-p0 = plot(years,out,'--',LineWidth=6); %plot geometric mean
-p1 = plot(years,hubs(highlights,:),LineWidth=6); %plot highlighted schools
+p0 = plot(years_f9,out,'--',LineWidth=6); %plot geometric mean
+p1 = plot(years_f9,hubs(highlights,:),LineWidth=6); %plot highlighted schools
 legend('-DynamicLegend');
 legend([p1;pe(1);po(1);p0],...
     [labels;{'elite schools';'other schools';'geometric mean'}],...
@@ -534,13 +461,13 @@ set(gca,'fontsize', fs);
 subplot(1,2,2)
 [ii,~,v] = find(auths');
 out = accumarray(ii,v,[],@geomean); %get geometric mean of all schools
-po = semilogy(years,auths',Color=color1,LineWidth=6); %plot all schools
+po = semilogy(years_f9,auths',Color=color1,LineWidth=6); %plot all schools
 hold all
-pe = plot(years,auths(h2,:),Color=color2,LineWidth=6); %plot just elite schools darker
+pe = plot(years_f9,auths(h2,:),Color=color2,LineWidth=6); %plot just elite schools darker
 ax = gca();
 ax.ColorOrderIndex = 1;
-p0 = plot(years,out,'--',LineWidth=6); %plot geometric mean
-p1 = plot(years,auths(highlights,:),LineWidth=6); %plot highlighted schools
+p0 = plot(years_f9,out,'--',LineWidth=6); %plot geometric mean
+p1 = plot(years_f9,auths(highlights,:),LineWidth=6); %plot highlighted schools
 legend('-DynamicLegend');
 legend([p1;pe(1);po(1);p0],...
     [labels;{'elite schools';'other schools';'geometric mean'}],...
@@ -549,6 +476,31 @@ axis([1950 2010 10^-5 10^0])
 xlabel('Date')
 ylabel('Authority Scores')
 set(gca,'fontsize', fs);
+
+%plot averaged graduate production and averaged faculty hiring for MIT, Yale, and CMU
+figure(10)
+clf
+set(gcf,'Position',figpos_sp)
+subplot(1,2,1)
+plot(year(:,1),movmean(num_grads(:,1),10),'LineWidth',5,'Color',[0.8500 0.3250 0.0980]);
+hold on;
+plot(year(:,2),movmean(num_grads(:,2),10),'LineWidth',5,'Color',[0.4940 0.1840 0.5560]);
+plot(year(:,3),movmean(num_grads(:,3),10),'LineWidth',5,'Color',[0.9290 0.6940 0.1250]); legend({'CMU','Yale','MIT'},'Location','northwest');
+xlabel('Year'); ylabel('Averaged Graduate Production');
+xticks(1950:10:2010);
+set(gca,'fontsize', fs);
+xlim([1950,2010]);
+subplot(1,2,2)
+plot(year(:,1),movmean(num_hires(:,1),10),'LineWidth',5,'Color',[0.8500 0.3250 0.0980]);
+hold on;
+plot(year(:,2),movmean(num_hires(:,2),10),'LineWidth',5,'Color',[0.4940 0.1840 0.5560]);
+plot(year(:,3),movmean(num_hires(:,3),10),'LineWidth',5,'Color',[0.9290 0.6940 0.1250]); legend({'CMU','Yale','MIT'},'Location','northwest');
+xticks(1950:10:2010); ylim([0 20]);
+xlabel('Year'); ylabel('Averaged Faculty Hires');
+set(gca,'fontsize', fs);
+xlim([1950,2010]);
+
+%FUNCTIONS
 
 %network construction function with rolling window of 10 years
 function [hub_ranks,auth_ranks,cit_ind,cmu_ind,com_ind,cor_ind,har_ind,mit_ind,prin_ind,stan_ind,ucb_ind,chi_ind,mich_ind,wash_ind,uwm_ind,yale_ind,schools,school_id]=network_gen(data,year1,year2,school_list)
