@@ -126,7 +126,7 @@ schools = table2array(data(:,1)); %get schools
 schools = categorical(schools); %make schools categorical
 counter=0; %set counter to 0
 for j=1:120 %cycle through 1900-2019
-    prof_ind = table2array(data(:,12)); %get flag TRUE or FALSE for professor status
+    prof_ind = table2array(data(:,10)); %get flag TRUE or FALSE for professor status
     prof_ind = strcmp(prof_ind,'TRUE'); %convert to 1 and 0.
     prof_ind = prof_ind(years==1900+counter); %filter by year
     fac_prob(j) = sum(prof_ind)/length(prof_ind); %number of profs divided by total phds

@@ -8,7 +8,7 @@ clear; clc; close all;
 data = readtable('MGPdata.csv');
 
 %filter the data to records that were trained and became a professor at a top 150 US math department
-top_fac_ind = table2array(data(:,12)); %true or false indicating if the entry was a professor at a top 150 US math department.
+top_fac_ind = table2array(data(:,10)); %true or false indicating if the entry was a professor at a top 150 US math department.
 top_fac_flag = strcmp(top_fac_ind,'TRUE'); %convert true false to 1/0
 fac_ind = find(top_fac_flag==1); %find indices such that top_fac_flag==1.
 fac_data = data(fac_ind,:); %restrict data set to those indices.
@@ -59,7 +59,7 @@ for b=1:length(school_list) %loop through schools
     counter=0; %reset counter
     for a=1:66 %loop through years
         start_date_fig3(a) = 1950+counter; %record x axis
-        prof_ind = table2array(data(:,12)); %get TRUE/FALSE for professor status
+        prof_ind = table2array(data(:,10)); %get TRUE/FALSE for professor status
         prof_ind = strcmp(prof_ind,'TRUE'); %convert TRUE/FALSE to 1/0
         prof_ind = prof_ind(years==1950+counter & schools == sl(b)); %get prof_ind flag for every school in school_list every year
         if isempty(prof_ind)==1
