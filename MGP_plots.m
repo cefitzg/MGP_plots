@@ -270,9 +270,9 @@ for i = 1:length(elist_list)
     temp_fac_years = temp_fac_data.year;
     %count up the number of people on a year by year basis
     for j = 1:69
-        year(j,i) = 1950+j;
-        num_grads(j,i) = length(find(temp_years == (1950+j)));
-        num_hires(j,i) = length(find(temp_fac_years==(1950+j)));
+        year(j,i) = 1949+j; %changed to 1949 so it will start in 1950 (j=1)
+        num_grads(j,i) = length(find(temp_years == (1949+j))); %changed to 1949 so it will start in 1950 (j=1)
+        num_hires(j,i) = length(find(temp_fac_years==(1949+j))); %changed to 1949 so it will start in 1950 (j=1)
     end
     
 end
@@ -326,7 +326,7 @@ ylabel('GFT Rate for Well Placing Schools')
 set(gca,'fontsize', fs);
 axis([start_date_fig3(1) start_date_fig3(end) 0 1])
 hold off
-legend('Maximum well-placing GFT transition rate','Median well-placing GFT transition rate','Minimum well-placing GFT transition rate')
+legend('Maximum well-placing GFT rate','Median well-placing GFT rate','Minimum well-placing GFT rate')
 legend('Location','northeast')
 xticks([1950 2015])
 
@@ -379,7 +379,7 @@ plot(1950:2010,top_14_auth,'LineWidth',lw,'LineStyle',':','Color','#FFA500')
 hold on
 plot(1950:2010,top_14_hub,'LineWidth',lw,'LineStyle','-','Color','#228B22')
 xlabel('Year')
-ylabel('Fraction of Centrality Held By Elite Departments')
+ylabel('Fraction of Centrality Held By Elite Depts')
 set(gca,'fontsize', fs);
 axis([1950 2010 0 1])
 legend('Authority Centrality','Hub Centrality')
@@ -425,12 +425,15 @@ slc = cellstr(school_list);
 hubs = hubs_in_order;
 auths = auth_in_order;
 years_f9 = 1950:2010;
-color1 = '#ececec'; %lighter gray for all schools
+color1 = '#D3D3D3';%'#ececec' ; %lighter gray for all schools
 color2 = '#999999'; %darker gray for elite schools
 highlights = [6,23,106]; % schools to highlight
 h2 = [5,10,17,29,32,38,58,50,82,88,98]; %elite schools
-labels = slc(highlights);
-
+%labels = slc(highlights);
+elite_lab{1} = 'CMU'; 
+elite_lab{2} = 'MIT';
+elite_lab{3} = 'Yale';
+labels = elite_lab';
 
 
 %plot hub and authority time series
