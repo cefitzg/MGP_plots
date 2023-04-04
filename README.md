@@ -1,3 +1,5 @@
+##Code 
+
 Code for analysis and recreating figures in "Temporal Dynamics of Faculty Hiring in Mathematics" by Cody FitzGerald, Yitong Huang, Katelyn Plaiser-Leisman, and Chad M. Topaz. 
 
 log_reg.R runs the statistical analysis on logisticdata.Rdata (Section 3.3) 
