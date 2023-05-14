@@ -485,15 +485,6 @@ figure(10)
 clf
 set(gcf,'Position',figpos_sp)
 subplot(1,2,1)
-plot(year(:,1),movmean(num_grads(:,1),10),'LineWidth',5,'Color',[0.8500 0.3250 0.0980]);
-hold on;
-plot(year(:,2),movmean(num_grads(:,2),10),'LineWidth',5,'Color',[0.4940 0.1840 0.5560]);
-plot(year(:,3),movmean(num_grads(:,3),10),'LineWidth',5,'Color',[0.9290 0.6940 0.1250]); legend({'CMU','Yale','MIT'},'Location','northwest');
-xlabel('Year'); ylabel('Averaged Graduate Production');
-xticks(1950:10:2010);
-set(gca,'fontsize', fs);
-xlim([1950,2010]);
-subplot(1,2,2)
 plot(year(:,1),movmean(num_hires(:,1),10),'LineWidth',5,'Color',[0.8500 0.3250 0.0980]);
 hold on;
 plot(year(:,2),movmean(num_hires(:,2),10),'LineWidth',5,'Color',[0.4940 0.1840 0.5560]);
@@ -502,6 +493,16 @@ xticks(1950:10:2010); ylim([0 20]);
 xlabel('Year'); ylabel('Averaged Faculty Hires');
 set(gca,'fontsize', fs);
 xlim([1950,2010]);
+subplot(1,2,2)
+plot(year(:,1),movmean(num_grads(:,1),10),'LineWidth',5,'Color',[0.8500 0.3250 0.0980]);
+hold on;
+plot(year(:,2),movmean(num_grads(:,2),10),'LineWidth',5,'Color',[0.4940 0.1840 0.5560]);
+plot(year(:,3),movmean(num_grads(:,3),10),'LineWidth',5,'Color',[0.9290 0.6940 0.1250]); legend({'CMU','Yale','MIT'},'Location','northwest');
+xlabel('Year'); ylabel('Averaged Graduate Production');
+xticks(1950:10:2010);
+set(gca,'fontsize', fs);
+xlim([1950,2010]);
+
 
 %FUNCTIONS
 
