@@ -1,4 +1,4 @@
-# Code and Data for "Temporal Dynamics of Faculty Hiring in Mathematics" by Cody FitzGerald, Yitong Huang, Katelyn Plaiser-Leisman, and Chad M. Topaz. 
+# Code and Data for "Temporal Dynamics of Faculty Hiring in Mathematics" by Cody FitzGerald, Yitong Huang, Katelyn Plaiser Leisman, and Chad M. Topaz. 
 
 ## Data
 
